@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using NaughtyAttributes;
 using UnityEngine.Events;
-using UnityEngine.SceneManagement;
 
 public class Health : MonoBehaviour
 {
     [Header("Assignable Values")]
     [SerializeField, ValidateInput("ValidateMaxHealth", "Cannot be negative value, or equal to 0.")] private int maxHealth;
+    [SerializeField] HealthBar healthbar;
 
     [SerializeField] UnityEvent onDieEvent;
     public bool isDead;
@@ -72,6 +72,11 @@ public class Health : MonoBehaviour
 
         currentHealth = Mathf.Clamp(currentHealth - damage, 0, maxHealth);
 
+        if (healthbar != null)
+        {
+            healthbar.UpdateHealth((float)currentHealth / (float)maxHealth);
+        }
+
         if (currentHealth <= 0)
         {
             Die();
@@ -101,8 +106,6 @@ public class Health : MonoBehaviour
         yield return new WaitForSeconds(2);
 
         gameObject.SetActive(false);
-
-        Scene scene = SceneManager.GetActiveScene(); SceneManager.LoadScene(scene.name);
     }
 
     private void TakeDamageAnim()
@@ -110,10 +113,6 @@ public class Health : MonoBehaviour
         if (animator != null)
         {
             this.animator.SetTrigger("hurt");
-        }
-        else {
-
-            Debug.Log("No animator to access on " + gameObject.name);
         }
     }
 }
