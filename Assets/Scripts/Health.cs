@@ -39,6 +39,7 @@ public class Health : MonoBehaviour
         currentHealth = maxHealth;
     }
 
+    #region On validate
     private void OnValidate()
     {
         if (maxHealth > 100)
@@ -46,6 +47,16 @@ public class Health : MonoBehaviour
             maxHealth = 100;
         }
     }
+    bool ValidateMaxHealth(int value)
+    {
+        if (value <= 0)
+        {
+            return false;
+        }
+
+        return true;
+    }
+    #endregion
 
     public void TakeDamage(int damage)
     {
@@ -72,15 +83,16 @@ public class Health : MonoBehaviour
         StartCoroutine(DieRoutine());
     }
 
-    bool ValidateMaxHealth(int value)
+    public void HealDamage(int heal)
     {
-        if (value <= 0)
-        {
-            return false;
-        }
+        currentHealth = Mathf.Clamp(currentHealth + heal, 0, maxHealth);
 
-        return true;
+        if (currentHealth >= maxHealth)
+        {
+            currentHealth = maxHealth;
+        }
     }
+
     IEnumerator DieRoutine()
     {
         isDead = true;
